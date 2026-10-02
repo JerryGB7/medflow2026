@@ -9,7 +9,7 @@ from app.main import app
 from app.models import Base, Hospital, User, Technician_RBAC
 from app.security import create_access_token, hash_password
 
-TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/bankdemo_test")
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/medi_test")
 test_engine = create_async_engine(TEST_DATABASE_URL, poolclass=NullPool)
 
 test_sessionmaker = async_sessionmaker(test_engine, expire_on_commit=False)
@@ -66,8 +66,8 @@ async def seeded_user(db_session):
     return users
 
 @pytest_asyncio.fixture
-async def seeded_branch(db_session):
-    hospital = Hospital(name="Test Branch", location_region="Test Location", capacity=100, supervisor_id=1)
+async def seeded_hospital(db_session):
+    hospital = Hospital(name="Test Hospital", location_region="Test Location", capacity=100, supervisor_id=1)
     db_session.add(hospital)
     await db_session.commit()
     await db_session.refresh(hospital)
