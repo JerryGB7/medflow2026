@@ -23,8 +23,15 @@ class EquipmentRead(EquipmentBase):
 
 class DiscrepancyRead(BaseModel):
     equipment_id: int
+    serial_number: int
+    model: str
+    equipment_status: str
+    battery_level: int
     equipment_hospital_id: int
+    equipment_hospital_name: str
     equipment_technician_id: int
     technician_id: int
+    technician_name: str
     technician_hospital_id: int
+    technician_hospital_name: str
     model_config = ConfigDict(from_attributes=True)

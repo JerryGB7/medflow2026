@@ -147,9 +147,11 @@ function EquipmentDataGrid({onNotification = () => {}}){
     return(
         <>
         {canCreate && (
-            <Button variant="contained" onClick={() => setCreateOpen(true)} sx={{mb: 2}}>
-                Create Equipment
-            </Button>
+                <Box sx={{display: 'flex', justifyContent: 'center', mb: 2}}>
+                    <Button variant="contained" onClick={() => setCreateOpen(true)}>
+                        Create Equipment
+                    </Button>
+                </Box>
         )}
         <Box sx={{height: 400, width:'100%'}}>
             <DataGrid

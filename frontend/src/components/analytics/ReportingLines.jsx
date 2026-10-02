@@ -17,7 +17,7 @@ function ReportingLines({supervisorId: initialSupervisorId = ""}){
 
 		apiClient.get("/work_orders/reporting_lines", {params: {supervisor_id: selectedSupervisorId}})
 			.then((response) => {
-				if (isMounted) setTechnicianCount(response.data.technicians_with_active_orders)
+				if (isMounted) setTechnicianCount(response.data.technicians_with_active_calls)
 			})
 			.catch(() => {
 				if (isMounted) setError("Unable to load reporting-line data.")
@@ -53,9 +53,9 @@ function ReportingLines({supervisorId: initialSupervisorId = ""}){
 					</Typography>
 				</Stack>
 				<Typography variant="body2" color="text.secondary" mb={2}>
-					Technicians reporting to a supervisor with active work orders
+					Technicians reporting to a supervisor with active work orders 
 				</Typography>
-
+				<br></br>
 				<Box component="form" onSubmit={handleSubmit} sx={{display: "flex", gap: 1.5, flexWrap: "wrap", mb: 2}}>
 					<TextField
 						label="Supervisor ID"
@@ -71,8 +71,8 @@ function ReportingLines({supervisorId: initialSupervisorId = ""}){
 				{loading && <CircularProgress size={28} aria-label="Loading reporting lines" />}
 				{error && <Alert severity="error">{error}</Alert>}
 				{!loading && !error && technicianCount !== null && (
-					<Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
-						<Typography color="text.secondary">Technicians with work orders</Typography>
+					<Stack direction="row" justifyContent="flex-end" alignItems="center" gap={2}>
+						<Typography color="text.secondary">Technicians with active work orders</Typography>
 						<Typography variant="h4" color="primary" fontWeight={800}>{technicianCount}</Typography>
 					</Stack>
 				)}

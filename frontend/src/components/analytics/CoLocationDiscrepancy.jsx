@@ -79,6 +79,23 @@ function CoLocationDiscrepancy(){
 						{discrepancyCount}
 					</Typography>
 				</Stack>
+				{discrepancies.length > 0 && (
+					<Stack spacing={1.5} sx={{mt: 2}}>
+						{discrepancies.map((equipment) => (
+							<Box key={equipment.equipment_id} sx={{pt: 1.5, borderTop: 1, borderColor: "divider"}}>
+								<Typography fontWeight={700}>
+									{equipment.model}{equipment.serial_number}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									Equipment ID: {equipment.equipment_id} 
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									At {equipment.equipment_hospital_name}; assigned technician {equipment.technician_name} (ID {equipment.technician_id}) is based at Hospital ({equipment.technician_hospital_id}).
+								</Typography>
+							</Box>
+						))}
+					</Stack>
+				)}
 			</CardContent>
 		</Card>
 	)

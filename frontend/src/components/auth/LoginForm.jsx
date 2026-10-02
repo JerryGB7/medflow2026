@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {Alert, Box, Button, Paper, TextField, Typography} from '@mui/material'
 import { useAuth } from "../../context/AuthContext.jsx";
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 
 function LoginForm(){
     const {login} = useAuth()
@@ -30,11 +31,11 @@ function LoginForm(){
             alignItems: 'center',
             minHeight: '100vh',
             px: 2,
-            backgroundImage: `linear-gradient(rgba(7, 22, 42, 0.48), rgba(7, 22, 42, 0.48)))`,
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
+            backgroundColor: 'background.default',
+            backgroundImage: 'radial-gradient(circle at 12% 12%, rgba(180, 35, 50, 0.1), transparent 34%), linear-gradient(150deg, #fff8f7 0%, #ffffff 68%, #f7eeee 100%)',
         }}>
-            <Paper component="form" onSubmit={handleSubmit} variant="outlined" sx={{p: 4, width: 320}}>
+            <Paper component="form" onSubmit={handleSubmit} variant="outlined" sx={{p: 4, width: 320, borderTop: '4px solid', borderTopColor: 'primary.main'}}>
+                <MedicalServicesIcon sx={{mr : 2}}/>
                 <Typography variant="h6" gutterBottom>
                     MedFlow Login
                 </Typography>

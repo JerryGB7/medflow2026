@@ -1,7 +1,16 @@
 import {useEffect, useState} from "react"
 import {DataGrid} from "@mui/x-data-grid"
-import {Alert, Box, Chip, CircularProgress, Typography} from "@mui/material"
-import apiClient from "../../api/client"    
+import {Alert, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Typography} from "@mui/material"
+import apiClient from "../../api/client"
+import {useAuth} from "../../context/AuthContext"
+
+const emptyForm = {
+    title: "",
+    priority: "Low",
+    status: "Pending",
+    equipment_id: "",
+    technician_id: "",
+}
 
 const columns = [
     {field: 'id', headerName: 'ID', width: 70, type: 'number'},
@@ -42,12 +51,70 @@ const columns = [
     {field: 'technician_id', headerName: "Technician ID", width: 120, type: "number"},
 ];
 
-function WorkOrderDataGrid(){
+function WorkOrderDataGrid({onNotification = () => {}}){
+    const {user} = useAuth()
     const [workOrders, setWorkOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [updateError, setUpdateError] = useState(null)
+    const [createOpen, setCreateOpen] = useState(false)
+    const [form, setForm] = useState(emptyForm)
+    const [createError, setCreateError] = useState(null)
+    const [creating, setCreating] = useState(false)
 
+    const canCreate = ["Clinical-Admin", "Operation-Manager"].includes(user?.role)
+
+    function updateForm(event){
+        setForm((current) => ({...current, [event.target.name]: event.target.value}))
+    }
+
+    function closeCreateDialog(){
+        if (!creating) {
+            setCreateOpen(false)
+            setCreateError(null)
+            setForm(emptyForm)
+        }
+    }
+
+    async function handleCreate(event){
+        event.preventDefault()
+        setCreateError(null)
+
+        const equipmentId = Number(form.equipment_id)
+        const technicianId = Number(form.technician_id)
+        if (!form.title.trim() || form.title.trim().length > 50 ||
+            !Number.isInteger(equipmentId) || equipmentId < 1 ||
+            !Number.isInteger(technicianId) || technicianId < 1) {
+            setCreateError("Enter a title (up to 50 characters), equipment ID, and technician ID.")
+            return
+        }
+
+        setCreating(true)
+        try {
+            const response = await apiClient.post("/work_orders", {
+                title: form.title.trim(),
+                priority: form.priority,
+                status: form.status,
+                equipment_id: equipmentId,
+                technician_id: technicianId,
+            })
+            setWorkOrders((current) => [...current, response.data])
+            setCreateOpen(false)
+            setForm(emptyForm)
+            onNotification({severity: "success", message: "Work order created successfully."})
+        } catch (requestError) {
+            const detail = requestError.response?.data?.detail
+            const message = typeof detail === "string"
+                ? detail
+                : Array.isArray(detail)
+                    ? detail.map((issue) => issue.msg).join(" ")
+                    : "The work order could not be created."
+            setCreateError(message)
+            onNotification({severity: "error", message})
+        } finally {
+            setCreating(false)
+        }
+    }
 
     useEffect(() => {
 
@@ -114,16 +181,13 @@ function WorkOrderDataGrid(){
                     {updateError}
                 </Alert>
             )}
-            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5}}>
-                <Box>
-                    <Typography variant="h6" sx={{color: '#fff', fontWeight: 700, letterSpacing: 1.2}}>
-                        Operations queue
-                    </Typography>
+            {canCreate && (
+                <Box sx={{display: 'flex', justifyContent: 'center', mb: 1.5}}>
+                    <Button variant="contained" onClick={() => setCreateOpen(true)}>
+                        Create Work Order
+                    </Button>
                 </Box>
-                <Typography variant="caption" color="text.secondary">
-                    {workOrders.length} {workOrders.length === 1 ? 'order' : 'orders'}
-                </Typography>
-            </Box>
+            )}
             <DataGrid
                 rows={workOrders}
                 columns={columns}
@@ -155,6 +219,56 @@ function WorkOrderDataGrid(){
                     '& .MuiDataGrid-virtualScroller': {overflowX: 'auto'},
                 }}
             />
+            <Dialog open={createOpen} onClose={closeCreateDialog} fullWidth maxWidth="sm">
+                <DialogTitle>Create Work Order</DialogTitle>
+                <Box component="form" onSubmit={handleCreate}>
+                    <DialogContent sx={{display: "grid", gap: 2}}>
+                        <TextField
+                            name="title"
+                            label="Title"
+                            value={form.title}
+                            onChange={updateForm}
+                            inputProps={{maxLength: 50}}
+                            required
+                        />
+                        <TextField name="priority" label="Priority" select value={form.priority} onChange={updateForm}>
+                            {["Low", "Medium", "Critical"].map((priority) => (
+                                <MenuItem key={priority} value={priority}>{priority}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField name="status" label="Status" select value={form.status} onChange={updateForm}>
+                            {["Pending", "In-Progress", "Completed", "Failed"].map((status) => (
+                                <MenuItem key={status} value={status}>{status}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            name="equipment_id"
+                            label="Equipment ID"
+                            type="number"
+                            value={form.equipment_id}
+                            onChange={updateForm}
+                            inputProps={{min: 1, step: 1}}
+                            required
+                        />
+                        <TextField
+                            name="technician_id"
+                            label="Technician ID"
+                            type="number"
+                            value={form.technician_id}
+                            onChange={updateForm}
+                            inputProps={{min: 1, step: 1}}
+                            required
+                        />
+                        {createError && <Alert severity="error">{createError}</Alert>}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={closeCreateDialog} disabled={creating}>Cancel</Button>
+                        <Button type="submit" variant="contained" disabled={creating}>
+                            {creating ? "Creating..." : "Create Work Order"}
+                        </Button>
+                    </DialogActions>
+                </Box>
+            </Dialog>
         </Box>
 
     )

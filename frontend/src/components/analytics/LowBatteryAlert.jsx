@@ -63,7 +63,7 @@ function LowBatteryAlert(){
 							</Typography>
 						</Stack>
 						<Typography variant="body2" color="text.secondary" mt={0.5}>
-							Hospitals with less than {LOW_BATTERY_THRESHOLD}% of active Equipments flagged for low-battery
+							Equipment with less than {LOW_BATTERY_THRESHOLD}% of battery charge flagged for low-battery
 						</Typography>
 					</Box>
 					<Box sx={{backgroundColor: "#fff4e5", color: "#8a4b08", px: 1.5, py: 1, borderRadius: 1, alignSelf: {xs: "flex-start", sm: "center"}}}>
