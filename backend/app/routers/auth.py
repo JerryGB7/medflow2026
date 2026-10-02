@@ -45,7 +45,7 @@ async def registered_user(
     
     db: AsyncSession = Depends(get_db),
     
-    _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN))
+    _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN, Technician_RBAC.OPERATION_MANAGER))
 ) -> User:
     
     existing = await db.execute(select(User).where(User.username == payload.username.lower()))

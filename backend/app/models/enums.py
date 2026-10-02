@@ -19,5 +19,6 @@ class Work_Order_Status(str, Enum):
 
 class Technician_RBAC(str, Enum):
     CLINICAL_ADMIN = "Clinical-Admin"
+    OPERATION_MANAGER = "Operation-Manager"
     FIELD_TECHNICIAN = "Field-Technician"
     AUDITOR = "Auditor"    

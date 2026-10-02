@@ -4,21 +4,19 @@ import {Alert, Box, Card, CardContent, CircularProgress, Divider, Stack, Typogra
 import BuildCircleOutlinedIcon from "@mui/icons-material/BuildCircleOutlined"
 import apiClient from "../../api/client"
 
-// Define the cash percentage used to identify low-cash ATMs.
 const LOW_BATTERY_THRESHOLD = 20
 
 function LowBatteryAlert(){
-	// Store ATM data, branch data, and request status.
+
 	const [equipments, setEquipments] = useState([])
 	const [hospitals, setHospitals] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null)
 
-	// Fetch low-cash ATMs and their branch information on mount.
+
 	useEffect(() => {
 		let isMounted = true
 
-		// Load both API resources concurrently.
 		async function fetchLowBatteryData(){
 			try {
 				const [equipmentResponse, hospitalResponse] = await Promise.all([
@@ -83,7 +81,7 @@ function LowBatteryAlert(){
 
 					<Stack divider={<Divider flexItem />}>
 						{lowBattery.map((equipment) => (
-							<Box key={atm.id} sx={{py: 1.5, display: "grid", gridTemplateColumns: {xs: "1fr", sm: "minmax(0, 1fr) auto"}, gap: 1.5, alignItems: "center"}}>
+							<Box key={equipment.id} sx={{py: 1.5, display: "grid", gridTemplateColumns: {xs: "1fr", sm: "minmax(0, 1fr) auto"}, gap: 1.5, alignItems: "center"}}>
 								<Box>
 									<Typography fontWeight={700}>{equipment.serial_number}</Typography>
 									<Typography variant="body2" color="text.secondary">

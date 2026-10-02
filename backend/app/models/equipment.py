@@ -22,27 +22,19 @@ class Equipment(Base):
         CheckConstraint("battery_level BETWEEN 0 AND 100", name="battery_level_range"),
     )
 
-
     id: Mapped[int] = mapped_column(primary_key=True)
-
-
     serial_number: Mapped[int] = mapped_column(Integer)
     model: Mapped[str] = mapped_column(String(50))
-
-
     status: Mapped[EquipmentStatus] = mapped_column(
         SqlEnum(
             EquipmentStatus,
             name="equipment_status",
-            # Store the enum values in the database rather than the Python enum names,
-            # keeping the DB representation compatible with the enum values.
             values_callable=lambda enum_cls: [member.value for member in enum_cls],
         ),
         default=EquipmentStatus.AVAILABLE,
     )
-
- 
     battery_level: Mapped[int] = mapped_column(Integer)
+    
     hospital_id: Mapped[int] = mapped_column(Integer, ForeignKey("hospitals.id"))
     technician_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("technicians.id"), nullable=True)
 

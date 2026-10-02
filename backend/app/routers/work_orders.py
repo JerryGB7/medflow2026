@@ -112,7 +112,7 @@ async def get_reporting_lines(
 
 @router.post("", response_model=WorkOrderRead, status_code=status.HTTP_201_CREATED)
 async def create_work_order(payload: WorkOrderCreate, db: AsyncSession = Depends(get_db), 
-                     _: User=Depends(require_role(Technician_RBAC.CLINICAL_ADMIN))):
+                     _: User=Depends(require_role(Technician_RBAC.CLINICAL_ADMIN, Technician_RBAC.OPERATION_MANAGER))):
    workorder = WorkOrder(**payload.model_dump())
 
    db.add(workorder)
@@ -128,7 +128,7 @@ async def update_status(
     work_order_id: int,
     new_status: Work_Order_Status = Query(...),
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_role(Technician_RBAC.FIELD_TECHNICIAN, Technician_RBAC.CLINICAL_ADMIN)),
+    _: User = Depends(require_role(Technician_RBAC.FIELD_TECHNICIAN, Technician_RBAC.CLINICAL_ADMIN, Technician_RBAC.OPERATION_MANAGER)),
 ) -> WorkOrder:
     if new_status not in (Work_Order_Status.COMPLETED, Work_Order_Status.FAILED, Work_Order_Status.IN_PROGRESS):
         raise HTTPException(
@@ -154,7 +154,7 @@ async def update_priority(
     work_order_id: int,
     new_priority: Work_Order_Priority = Query(...),
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN)),
+    _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN, Technician_RBAC.OPERATION_MANAGER)),
 ) -> WorkOrder:
     work_order = await db.get(WorkOrder, work_order_id)
     if work_order is None:

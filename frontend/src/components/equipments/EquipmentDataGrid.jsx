@@ -89,7 +89,7 @@ function EquipmentDataGrid({onNotification = () => {}}){
                 hospital_id: Number(form.hospital_id),
                 technician_id: form.technician_id ? Number(form.technician_id) : null,
             })
-            setATMS((current) => [...current, response.data])
+            setEquipments((current) => [...current, response.data])
             setCreateOpen(false)
             setForm(emptyForm)
             onNotification({severity: "success", message: "Equipment created successfully."})
@@ -128,7 +128,7 @@ function EquipmentDataGrid({onNotification = () => {}}){
                 const response = await apiClient.get('/equipments')
                 if(isMounted) setEquipments(response.data)
             } catch {
-                if (isMounted) setError('error showing atms')
+                if (isMounted) setError('error showing equipment')
             } finally {
                 if (isMounted) setLoading(false)
             }
@@ -139,17 +139,11 @@ function EquipmentDataGrid({onNotification = () => {}}){
         }
     }, []);
 
-    // The loading guard ensures the user sees a spinner while the request is in flight.
-    // This is important for good UX because it shows the app is actively working instead of
-    // appearing blank or frozen during network latency.
+
     if (loading) return <CircularProgress />
 
-    // If the request fails, we display an error alert with a clear message.
-    // This is important because users need immediate feedback about problems with the backend.
     if (error) return <Alert severity="error">{error}</Alert>
 
-    // Once the data is loaded, render the Material UI DataGrid inside a container.
-    // The Box gives the grid a fixed height and full width so the table has a consistent layout.
     return(
         <>
         {canCreate && (

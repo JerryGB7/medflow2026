@@ -11,7 +11,7 @@ router = APIRouter(prefix="/equipments", tags=["equipments"])
 
 
 @router.get("", response_model = list[EquipmentRead])
-async def list_equipmentss(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
+async def list_equipments(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
     statement = select(Equipment).where(Equipment.status != EquipmentStatus.OFFLINE)
 
 
@@ -22,7 +22,7 @@ async def list_equipmentss(db: AsyncSession = Depends(get_db), _: User = Depends
 @router.get("/low_battery", response_model = list[EquipmentRead])
 async def active_equipments_with_low_battery(low_battery_threshold: int = 20, db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
 
-    statement = select(Equipment).where(Equipment.battery_level_level < low_battery_threshold).where(Equipment.status != EquipmentStatus.OFFLINE)
+    statement = select(Equipment).where(Equipment.battery_level < low_battery_threshold).where(Equipment.status != EquipmentStatus.OFFLINE)
 
     result = await db.execute(statement)
     return list(result.scalars().all())
@@ -44,10 +44,10 @@ async def discrepency(db: AsyncSession = Depends(get_db)):
     statement = (
         select(
             Equipment.id.label("equipment_id"),
-            Equipment.hospital_id.label("equipment_branch_id"),
+            Equipment.hospital_id.label("equipment_hospital_id"),
             Equipment.technician_id.label("equipment_technician_id"),
             Technician.id.label("technician_id"),
-            Technician.hospital_id.label("technician_branch_id"),
+            Technician.hospital_id.label("technician_hospital_id"),
         )
         .join(Technician, Technician.id == Equipment.technician_id).where(Technician.hospital_id != Equipment.hospital_id)
     )
@@ -68,7 +68,7 @@ async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(
 
 @router.delete("/{equipment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_equipment(equipment_id: int, db: AsyncSession = Depends(get_db),
-                     _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN))):
+                     _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN, Technician_RBAC.OPERATION_MANAGER))):
     equipment = await db.get(Equipment, equipment_id)
     if equipment is None:
         raise HTTPException(

@@ -9,9 +9,9 @@ function getField(record, snakeCaseName, camelCaseName){
 export function countCoLocationDiscrepancies(equipments = [], technicians = []){
 	if (technicians.length === 0) {
 		return equipments.filter((equipment) => (
-			equipment.Equipment_hospital_id != null &&
+			equipment.equipment_hospital_id != null &&
 			equipment.technician_hospital_id != null &&
-			equipment.Equipment_hospital_id !== equipment.technician_hospital_id
+			equipment.equipment_hospital_id !== equipment.technician_hospital_id
 		)).length
 	}
 
