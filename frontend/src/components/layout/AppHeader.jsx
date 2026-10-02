@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {AppBar, Toolbar, Typography, Box, Button, IconButton, ListItemText, Menu, MenuItem, Tooltip} from '@mui/material'
+import {AppBar, Toolbar, Typography, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip} from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 
@@ -36,18 +36,27 @@ function AppHeader({username, role, onLogout, analyticsOptions = [], selectedAna
                                 onClose={() => setMenuAnchorEl(null)}
                                 MenuListProps={{'aria-labelledby': 'analytics-menu-button'}}
                             >
-                                {analyticsOptions.map((option) => (
-                                    <MenuItem
-                                        key={option.value}
-                                        selected={selectedAnalytics === option.value}
-                                        onClick={() => {
-                                            onSelectAnalytics(option.value)
-                                            setMenuAnchorEl(null)
-                                        }}
-                                    >
-                                        <ListItemText primary={option.label} />
-                                    </MenuItem>
-                                ))}
+                                {analyticsOptions.map((option) => {
+                                    const OptionIcon = option.Icon
+
+                                    return (
+                                        <MenuItem
+                                            key={option.value}
+                                            selected={selectedAnalytics === option.value}
+                                            onClick={() => {
+                                                onSelectAnalytics(option.value)
+                                                setMenuAnchorEl(null)
+                                            }}
+                                        >
+                                            {OptionIcon && (
+                                                <ListItemIcon>
+                                                    <OptionIcon fontSize="small" />
+                                                </ListItemIcon>
+                                            )}
+                                            <ListItemText primary={option.label} />
+                                        </MenuItem>
+                                    )
+                                })}
                             </Menu>
                         </>
                     )}

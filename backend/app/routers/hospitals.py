@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dependencies import get_db
+from app.dependencies import get_db, require_role
 from app.models.hospital import Hospital
+from app.models import Technician_RBAC, User
 from app.schemas.hospital import HospitalCreate, HospitalRead
 
 router = APIRouter(prefix="/hospitals", tags=["hospitals"])
@@ -29,7 +30,11 @@ async def get_hospital(hospital_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("", response_model=HospitalRead, status_code=status.HTTP_201_CREATED)
-async def create_hospital(payload: HospitalCreate, db: AsyncSession = Depends(get_db)):
+async def create_hospital(
+    payload: HospitalCreate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role(Technician_RBAC.CLINICAL_ADMIN)),
+):
 
     hospital = Hospital(**payload.model_dump())
 

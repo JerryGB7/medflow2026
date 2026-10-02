@@ -1,5 +1,13 @@
 import { useState } from "react"
 import { Container, Typography, Box, Snackbar, Alert } from "@mui/material"
+import Battery20Icon from '@mui/icons-material/Battery20';
+import OutlinedFlagIcon from '@mui/icons-material/OutlinedFlag';
+import GroupsIcon from '@mui/icons-material/Groups';
+import LocationOffIcon from '@mui/icons-material/LocationOff';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import GradingIcon from '@mui/icons-material/Grading';
 
 import AppHeader from "./components/layout/AppHeader"
 import EquipmentDataGrid from "./components/equipments/EquipmentDataGrid.jsx"
@@ -11,18 +19,16 @@ import CoLocationDiscrepancy from "./components/analytics/CoLocationDiscrepancy.
 import ReliabilityMetrics from "./components/analytics/ReliabilityMetrics.jsx"
 import ReportingLines from "./components/analytics/ReportingLines.jsx"
 
-
 import LoginForm from "./components/auth/LoginForm"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 
 const analyticsOptions = [
-  {value: "maintenance", label: "Maintenance Flags", Component: MaintenanceFlags},
-  {value: "low-battery", label: "Low Battery Alert", Component: LowBatteryAlert},
-  {value: "co-location", label: "Co-location Discrepancy", Component: CoLocationDiscrepancy},
-  {value: "reliability", label: "Reliability Metrics", Component: ReliabilityMetrics},
-  {value: "reporting-lines", label: "Reporting Lines", Component: ReportingLines},
+  {value: "maintenance", label: "Maintenance Flags", Component: MaintenanceFlags, Icon: OutlinedFlagIcon},
+  {value: "low-battery", label: "Low Battery Alert", Component: LowBatteryAlert, Icon: Battery20Icon},
+  {value: "co-location", label: "Co-location Discrepancy", Component: CoLocationDiscrepancy, Icon: LocationOffIcon},
+  {value: "reliability", label: "Reliability Metrics", Component: ReliabilityMetrics, Icon: AnalyticsIcon},
+  {value: "reporting-lines", label: "Reporting Lines", Component: ReportingLines, Icon: GroupsIcon},
 ]
-
 
 function Dashboard(){
   const {user, logout} = useAuth()
@@ -57,19 +63,20 @@ function Dashboard(){
           )}
         </Box>
         <Typography variant="h5" component="h2" gutterBottom>
-          All Hospitals
+          <LocationCityIcon/> All Hospitals 
         </Typography>
+        
         <Box sx={{mb: 4}}>
-          <HospitalDataGrid />
+          <HospitalDataGrid onNotification={setNotification} />
         </Box> 
         <Typography variant="h5" component="h2" gutterBottom>
-          List of Equipment
+          <BiotechIcon/> List of Equipment
         </Typography>
           <Box sx={{mb: 4}}>
             <EquipmentDataGrid onNotification={setNotification} />
           </Box>
         <Typography variant="h5" component="h2" gutterBottom>
-          Current Work Orders
+          <GradingIcon/> Current Work Orders
         </Typography>
         <Box sx={{mb: 4}}>
           <WorkOrderDataGrid onNotification={setNotification} />
